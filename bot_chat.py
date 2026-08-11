@@ -1,5 +1,5 @@
 import streamlit as st
-import google.generativeai as genai
+from google import genai
 
 # 1. Cấu hình giao diện tổng thể
 st.set_page_config(
@@ -9,7 +9,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# 2. Chèn CSS tùy chỉnh giao diện
+# 2. Chèn CSS tùy chỉnh giao diện (Nền trắng, sạch sẽ)
 st.markdown("""
     <style>
     .stApp {
@@ -45,8 +45,12 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 3. Cấu hình API Key chuẩn
-genai.configure(api_key="AQ.Ab8RN6LiD07QEAy0D8XrHvz1y40GXW47T7r6qOtKx9rNIBJn9fw")
+# 3. Khởi tạo Client Gemini chuẩn theo SDK mới
+@st.cache_resource
+def get_client():
+    return genai.Client(api_key="AQ.Ab8RN6LiD07QEAy0D8XrHvz1y40GXW47T7r6qOtKx9rNIBJn9fw")
+
+client = get_client()
 
 # 4. Hồ sơ hệ thống (System Instruction)
 system_instruction = """
@@ -101,21 +105,17 @@ if prompt := st.chat_input("Nhập yêu cầu bài tập hoặc câu hỏi về 
     with st.chat_message("assistant"):
         with st.spinner("Đang tính toán quỹ đạo và dữ liệu..."):
             try:
-                # Khởi tạo model với system instruction
-                model = genai.GenerativeModel(
-                    model_name="gemini-1.5-flash",
-                    system_instruction=system_instruction
-                )
-                
-                # Chuyển đổi lịch sử chat cho đúng định dạng của SDK cũ
-                history_for_gemini = []
+                formatted_history = []
                 for m in st.session_state.messages[:-1]:
                     role = "user" if m["role"] == "user" else "model"
-                    history_for_gemini.append({"role": role, "parts": [m["content"]]})
-                
-                chat_session = model.start_chat(history=history_for_gemini)
-                response = chat_session.send_message(prompt)
-                
+                    formatted_history.append({"role": role, "parts": [{"text": m["content"]}]})
+
+                chat = client.chats.create(
+                    model="gemini-2.5-flash",
+                    history=formatted_history,
+                    config=genai.types.GenerateContentConfig(system_instruction=system_instruction)
+                )
+                response = chat.send_message(prompt)
                 st.markdown(response.text)
                 st.session_state.messages.append({"role": "assistant", "content": response.text})
             except Exception as e:
