@@ -1,49 +1,105 @@
 
-  import streamlit as st
+ import streamlit as st
 from google import genai
 
-# Cấu hình giao diện
-st.set_page_config(page_title="Trợ lý ảo cá nhân - MTA & Cấp 3", page_icon="🤖", layout="centered")
+# 1. Cấu hình giao diện tổng thể mang phong cách High-Tech
+st.set_page_config(
+    page_title="TACTICAL AI - Đức Minh",
+    page_icon="⚡",
+    layout="centered",
+    initial_sidebar_state="expanded"
+)
 
-# Dùng cache_resource để giữ client luôn hoạt động
+# 2. Chèn CSS tùy chỉnh giao diện đậm chất công nghệ / quân sự tương lai
+st.markdown("""
+    <style>
+    /* Tổng thể nền trang */
+    .stApp {
+        background-color: #0b0f19;
+        color: #e2e8f0;
+    }
+    
+    /* Tùy chỉnh khung chat của người dùng */
+    .stChatMessage[data-testid="stChatMessageUser"] {
+        background-color: #1e293b;
+        border: 1px solid #3b82f6;
+        border-radius: 12px;
+    }
+    
+    /* Tùy chỉnh khung chat của trợ lý AI */
+    .stChatMessage[data-testid="stChatMessageAssistant"] {
+        background-color: #0f172a;
+        border: 1px solid #10b981;
+        border-radius: 12px;
+    }
+    
+    /* Thanh nhập tin nhắn */
+    .stChatInput input {
+        background-color: #1e293b !important;
+        color: #ffffff !important;
+        border: 1px solid #3b82f6 !important;
+        border-radius: 8px !important;
+    }
+    
+    /* Thanh sidebar */
+    [data-testid="stSidebar"] {
+        background-color: #090d16;
+        border-right: 1px solid #1e293b;
+    }
+    
+    /* Tiêu đề phong cách công nghệ */
+    h1, h2, h3 {
+        font-family: 'Courier New', monospace;
+        letter-spacing: 1px;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+# 3. Khởi tạo Client Gemini
 @st.cache_resource
 def get_client():
-    return genai.Client(api_key="AQ.Ab8RN6LId07QEAy0D8XrHvz1y40GXW47T7r6qOtKx9rNIBJn9fw")
+    return genai.Client(api_key="AQ.Ab8RN6LiD07QEAy0D8XrHvz1y40GXW47T7r6qOtKx9rNIBJn9fw")
 
 client = get_client()
 
-# Thanh sidebar
-with st.sidebar:
-    st.image("https://cdn-icons-png.flaticon.com/512/4712/4712109.png", width=80)
-    st.title("🎯 Góc Cạ Cứng")
-    st.markdown("---")
-    st.markdown("**Hồ sơ đồng hành:**")
-    st.markdown("- 🎒 **Cấp 3:** Học sinh lớp 10")
-    st.markdown("- 🎯 **Mục tiêu:** Thi vào MTA & HSA")
-    st.markdown("- 🇬🇧 **Ngoại ngữ:** Chinh phục IELTS")
-    st.markdown("- 🏸 **Thể thao:** Cầu lông")
-    st.markdown("- 🚀 **Sở thích:** Công nghệ, Vũ trụ, Quân sự")
-    st.markdown("---")
-    st.caption("Trợ lý độc quyền 2026")
-
-# Tiêu đề chính
-st.title("🤖 Trợ lý ảo cá nhân độc quyền")
-st.markdown("---")
-
+# 4. Hồ sơ hệ thống (System Instruction)
 system_instruction = """
-Bạn là một trợ lý ảo cá nhân thông minh, gần gũi, là bạn đồng hành cùng chủ nhân (học sinh lớp 10) trong 3 năm cấp 3.
-Ghi nhớ: Chủ nhân thích công nghệ, quân sự, vũ trụ, đang ôn thi HSA/MTA và học IELTS. 
-Nhiệm vụ: Hỗ trợ bài tập, kèm Tiếng Anh, trò chuyện tâm sự.
+Bạn là một trợ lý ảo chiến thuật cá nhân thông minh, tâm lý và là người bạn đồng hành thân thiết của Đức Minh - một nam sinh lớp 10 (sinh năm 2011) trong suốt 3 năm cấp 3.
+
+**Hồ sơ của Đức Minh (Chủ nhân của bạn):**
+* Tính cách: Khá hướng nội, thích sự sâu sắc, điềm tĩnh.
+* Đam mê: Đặc biệt yêu thích tìm hiểu về Công nghệ, Quân sự và Vũ trụ. Thích phân tích văn học (hiểu rõ các thể thơ truyền thống như Song Thất Lục Bát).
+* Thể thao: Thích đánh cầu lông và chạy bộ để rèn luyện sức khỏe.
+* Học lực hiện tại: Đang yếu môn Tiếng Anh; các môn Toán, Lý, Hóa ở mức bình thường (cần cải thiện và bứt phá).
+* Mục tiêu tối thượng: Đỗ vào Học viện Kỹ thuật Quân sự (MTA) và đạt điểm cao trong kỳ thi Đánh giá năng lực (HSA). Đồng thời cần học để lấy chứng chỉ IELTS.
+
+**Nhiệm vụ của bạn:**
+1. Gia sư chiến thuật: Hỗ trợ Minh học tập mỗi ngày. Kiên nhẫn giảng giải các bài tập Toán, Lý, Hóa từ cơ bản đến nâng cao để cải thiện điểm số. Tạo động lực học Tiếng Anh (IELTS) bằng các phương pháp logic, thực tế.
+2. Định hướng thi cử: Bám sát mục tiêu thi MTA và HSA. Cung cấp kiến thức, mẹo giải đề, và lộ trình ôn thi chuẩn xác.
+3. Đồng đội tâm giao: Trò chuyện tinh tế, phù hợp với người hướng nội. Sẵn sàng cùng Minh bàn luận sâu về công nghệ hiện đại, khí tài quân sự, hoặc các bí ẩn không gian vũ trụ.
+4. Xưng hô: Gọi chủ nhân là "Minh" hoặc "cậu", xưng là "tớ" hoặc "mình" tạo cảm giác gắn kết như hai người bạn đồng hành chí cốt trong một "tiểu đội".
 """
 
-# Khởi tạo phiên chat
-if "chat_session" not in st.session_state:
-    st.session_state.chat_session = client.chats.create(
-        model="gemini-2.5-flash",
-        config={"system_instruction": system_instruction}
-    )
+# 5. Thanh sidebar phong cách Trạm Chỉ Huy
+with st.sidebar:
+    st.image("https://cdn-icons-png.flaticon.com/512/8635/8635578.png", width=70)
+    st.markdown("### ⚡ COMMAND CENTER")
+    st.markdown("---")
+    st.markdown("**🛡️ THÔNG TIN HỒ SƠ:**")
+    st.markdown("- 🎓 **Cấp độ:** Lớp 10 (2011)")
+    st.markdown("- 🎯 **Mục tiêu:** MTA & HSA")
+    st.markdown("- 🌐 **Ngoại ngữ:** IELTS Focus")
+    st.markdown("- 🚀 **Lĩnh vực:** Tech, Space, Military")
+    st.markdown("- 🏸 **Thể lực:** Cầu lông, Chạy bộ")
+    st.markdown("---")
+    st.caption("SYSTEM STATUS: ONLINE 🟢")
+    st.caption("ENCRYPTION: SECURE")
 
-# Hiển thị tin nhắn cũ
+# 6. Giao diện Chat chính
+st.title("🛰️ TACTICAL AI ASSISTANT")
+st.caption("Hệ thống hỗ trợ cá nhân hóa độc quyền cho Đức Minh")
+st.markdown("---")
+
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
@@ -51,17 +107,26 @@ for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-# Xử lý tin nhắn mới
-if user_input := st.chat_input("Nhắn gì đi cạ cứng ơi..."):
-    st.session_state.messages.append({"role": "user", "content": user_input})
+if prompt := st.chat_input("Nhập lệnh hoặc câu hỏi cho trợ lý..."):
+    st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
-        st.markdown(user_input)
+        st.markdown(prompt)
 
     with st.chat_message("assistant"):
-        with st.spinner("Cạ cứng đang suy nghĩ..."):
+        with st.spinner("Đang xử lý dữ liệu..."):
             try:
-                response = st.session_state.chat_session.send_message(user_input)
+                formatted_history = []
+                for m in st.session_state.messages[:-1]:
+                    role = "user" if m["role"] == "user" else "model"
+                    formatted_history.append({"role": role, "parts": [{"text": m["content"]}]})
+
+                chat = client.chats.create(
+                    model="gemini-2.5-flash",
+                    history=formatted_history,
+                    config=genai.types.GenerateContentConfig(system_instruction=system_instruction)
+                )
+                response = chat.send_message(prompt)
                 st.markdown(response.text)
                 st.session_state.messages.append({"role": "assistant", "content": response.text})
             except Exception as e:
-                st.error("Ơ, có vẻ kết nối bị gián đoạn. Cậu thử tải lại trang (F5) nhé!")
+                st.error(f"Lỗi hệ thống: {e}")
