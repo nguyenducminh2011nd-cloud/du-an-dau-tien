@@ -1,8 +1,6 @@
-
- import streamlit as st
+import streamlit as st
 from google import genai
 
-# 1. Cấu hình giao diện tổng thể mang phong cách High-Tech
 st.set_page_config(
     page_title="TACTICAL AI - Đức Minh",
     page_icon="⚡",
@@ -10,44 +8,32 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# 2. Chèn CSS tùy chỉnh giao diện đậm chất công nghệ / quân sự tương lai
 st.markdown("""
     <style>
-    /* Tổng thể nền trang */
     .stApp {
         background-color: #0b0f19;
         color: #e2e8f0;
     }
-    
-    /* Tùy chỉnh khung chat của người dùng */
     .stChatMessage[data-testid="stChatMessageUser"] {
         background-color: #1e293b;
         border: 1px solid #3b82f6;
         border-radius: 12px;
     }
-    
-    /* Tùy chỉnh khung chat của trợ lý AI */
     .stChatMessage[data-testid="stChatMessageAssistant"] {
         background-color: #0f172a;
         border: 1px solid #10b981;
         border-radius: 12px;
     }
-    
-    /* Thanh nhập tin nhắn */
     .stChatInput input {
         background-color: #1e293b !important;
         color: #ffffff !important;
         border: 1px solid #3b82f6 !important;
         border-radius: 8px !important;
     }
-    
-    /* Thanh sidebar */
     [data-testid="stSidebar"] {
         background-color: #090d16;
         border-right: 1px solid #1e293b;
     }
-    
-    /* Tiêu đề phong cách công nghệ */
     h1, h2, h3 {
         font-family: 'Courier New', monospace;
         letter-spacing: 1px;
@@ -55,14 +41,12 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 3. Khởi tạo Client Gemini
 @st.cache_resource
 def get_client():
     return genai.Client(api_key="AQ.Ab8RN6LiD07QEAy0D8XrHvz1y40GXW47T7r6qOtKx9rNIBJn9fw")
 
 client = get_client()
 
-# 4. Hồ sơ hệ thống (System Instruction)
 system_instruction = """
 Bạn là một trợ lý ảo chiến thuật cá nhân thông minh, tâm lý và là người bạn đồng hành thân thiết của Đức Minh - một nam sinh lớp 10 (sinh năm 2011) trong suốt 3 năm cấp 3.
 
@@ -80,7 +64,6 @@ Bạn là một trợ lý ảo chiến thuật cá nhân thông minh, tâm lý v
 4. Xưng hô: Gọi chủ nhân là "Minh" hoặc "cậu", xưng là "tớ" hoặc "mình" tạo cảm giác gắn kết như hai người bạn đồng hành chí cốt trong một "tiểu đội".
 """
 
-# 5. Thanh sidebar phong cách Trạm Chỉ Huy
 with st.sidebar:
     st.image("https://cdn-icons-png.flaticon.com/512/8635/8635578.png", width=70)
     st.markdown("### ⚡ COMMAND CENTER")
@@ -95,7 +78,6 @@ with st.sidebar:
     st.caption("SYSTEM STATUS: ONLINE 🟢")
     st.caption("ENCRYPTION: SECURE")
 
-# 6. Giao diện Chat chính
 st.title("🛰️ TACTICAL AI ASSISTANT")
 st.caption("Hệ thống hỗ trợ cá nhân hóa độc quyền cho Đức Minh")
 st.markdown("---")
@@ -130,3 +112,6 @@ if prompt := st.chat_input("Nhập lệnh hoặc câu hỏi cho trợ lý..."):
                 st.session_state.messages.append({"role": "assistant", "content": response.text})
             except Exception as e:
                 st.error(f"Lỗi hệ thống: {e}")
+
+
+             
