@@ -1,54 +1,43 @@
 import streamlit as st
-from google import genai
+import google.generativeai as genai
 
-# 1. Cấu hình giao diện tổng thể (Nền trắng tinh khôi, hiện đại)
+# 1. Cấu hình giao diện tổng thể
 st.set_page_config(
     page_title="MTA Tactical AI - Đức Minh",
-    page_icon="🚀",
+    page_icon="🛰️",
     layout="centered",
     initial_sidebar_state="expanded"
 )
 
-# 2. Chèn CSS tùy chỉnh giao diện (Nền trắng, sạch sẽ, điểm nhấn xanh quân đội & vũ trụ)
+# 2. Chèn CSS tùy chỉnh giao diện
 st.markdown("""
     <style>
-    /* Tổng thể nền trang: Trắng sáng */
     .stApp {
         background-color: #ffffff;
         color: #1f2937;
     }
-    
-    /* Khung chat của người dùng: Xanh dương nhạt nhẹ nhàng */
     .stChatMessage[data-testid="stChatMessageUser"] {
         background-color: #f0f4f8;
         border-radius: 12px;
         border: 1px solid #d1d5db;
         color: #1e3a8a;
     }
-    
-    /* Khung chat của trợ lý AI: Trắng tinh viền xám nhạt */
     .stChatMessage[data-testid="stChatMessageAssistant"] {
         background-color: #f9fafb;
         border-radius: 12px;
         border: 1px solid #e5e7eb;
         color: #111827;
     }
-    
-    /* Thanh nhập tin nhắn */
     .stChatInput input {
         background-color: #f9fafb !important;
         color: #111827 !important;
         border: 1px solid #9ca3af !important;
         border-radius: 8px !important;
     }
-    
-    /* Thanh sidebar: Xám rất nhạt, tinh tế */
     [data-testid="stSidebar"] {
         background-color: #f3f4f6;
         border-right: 1px solid #e5e7eb;
     }
-    
-    /* Tiêu đề */
     h1, h2, h3 {
         color: #111827;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -56,14 +45,10 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 3. Khởi tạo Client Gemini
-@st.cache_resource
-def get_client():
-    return genai.Client(api_key="AQ.Ab8RN6LiD07QEAy0D8XrHvz1y40GXW47T7r6qOtKx9rNIBJn9fw")
+# 3. Cấu hình API Key chuẩn
+genai.configure(api_key="AQ.Ab8RN6LiD07QEAy0D8XrHvz1y40GXW47T7r6qOtKx9rNIBJn9fw")
 
-client = get_client()
-
-# 4. Hồ sơ hệ thống (System Instruction gắn liền mục tiêu MTA)
+# 4. Hồ sơ hệ thống (System Instruction)
 system_instruction = """
 Bạn là một trợ lý ảo chiến thuật cá nhân thông minh, tâm lý và là người bạn đồng hành thân thiết của Đức Minh - một nam sinh lớp 10 (sinh năm 2011) trong suốt 3 năm cấp 3.
 
@@ -81,9 +66,9 @@ Bạn là một trợ lý ảo chiến thuật cá nhân thông minh, tâm lý v
 4. Xưng hô: Gọi chủ nhân là "Minh" hoặc "cậu", xưng là "tớ" hoặc "mình" tạo cảm giác gắn kết như hai người bạn đồng hành chí cốt.
 """
 
-# 5. Thanh sidebar trang trí phong cách Tàu vũ trụ & MTA
+# 5. Thanh sidebar
 with st.sidebar:
-    st.image("https://cdn-icons-png.flaticon.com/512/3135/3135715.png", width=70)
+    st.image("https://cdn-icons-png.flaticon.com/512/3065/3065405.png", width=80)
     st.markdown("### 🚀 TRẠM KHÔNG GIAN MTA")
     st.markdown("---")
     st.markdown("**🛡️ HỒ SƠ CHỈ HUY:**")
@@ -116,17 +101,21 @@ if prompt := st.chat_input("Nhập yêu cầu bài tập hoặc câu hỏi về 
     with st.chat_message("assistant"):
         with st.spinner("Đang tính toán quỹ đạo và dữ liệu..."):
             try:
-                formatted_history = []
+                # Khởi tạo model với system instruction
+                model = genai.GenerativeModel(
+                    model_name="gemini-1.5-flash",
+                    system_instruction=system_instruction
+                )
+                
+                # Chuyển đổi lịch sử chat cho đúng định dạng của SDK cũ
+                history_for_gemini = []
                 for m in st.session_state.messages[:-1]:
                     role = "user" if m["role"] == "user" else "model"
-                    formatted_history.append({"role": role, "parts": [{"text": m["content"]}]})
-
-                chat = client.chats.create(
-                    model="gemini-2.5-flash",
-                    history=formatted_history,
-                    config=genai.types.GenerateContentConfig(system_instruction=system_instruction)
-                )
-                response = chat.send_message(prompt)
+                    history_for_gemini.append({"role": role, "parts": [m["content"]]})
+                
+                chat_session = model.start_chat(history=history_for_gemini)
+                response = chat_session.send_message(prompt)
+                
                 st.markdown(response.text)
                 st.session_state.messages.append({"role": "assistant", "content": response.text})
             except Exception as e:
