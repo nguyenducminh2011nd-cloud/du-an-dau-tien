@@ -1,52 +1,69 @@
 import streamlit as st
 from google import genai
 
+# 1. Cấu hình giao diện tổng thể (Nền trắng tinh khôi, hiện đại)
 st.set_page_config(
-    page_title="TACTICAL AI - Đức Minh",
-    page_icon="⚡",
+    page_title="MTA Tactical AI - Đức Minh",
+    page_icon="🚀",
     layout="centered",
     initial_sidebar_state="expanded"
 )
 
+# 2. Chèn CSS tùy chỉnh giao diện (Nền trắng, sạch sẽ, điểm nhấn xanh quân đội & vũ trụ)
 st.markdown("""
     <style>
+    /* Tổng thể nền trang: Trắng sáng */
     .stApp {
-        background-color: #0b0f19;
-        color: #e2e8f0;
+        background-color: #ffffff;
+        color: #1f2937;
     }
+    
+    /* Khung chat của người dùng: Xanh dương nhạt nhẹ nhàng */
     .stChatMessage[data-testid="stChatMessageUser"] {
-        background-color: #1e293b;
-        border: 1px solid #3b82f6;
+        background-color: #f0f4f8;
         border-radius: 12px;
+        border: 1px solid #d1d5db;
+        color: #1e3a8a;
     }
+    
+    /* Khung chat của trợ lý AI: Trắng tinh viền xám nhạt */
     .stChatMessage[data-testid="stChatMessageAssistant"] {
-        background-color: #0f172a;
-        border: 1px solid #10b981;
+        background-color: #f9fafb;
         border-radius: 12px;
+        border: 1px solid #e5e7eb;
+        color: #111827;
     }
+    
+    /* Thanh nhập tin nhắn */
     .stChatInput input {
-        background-color: #1e293b !important;
-        color: #ffffff !important;
-        border: 1px solid #3b82f6 !important;
+        background-color: #f9fafb !important;
+        color: #111827 !important;
+        border: 1px solid #9ca3af !important;
         border-radius: 8px !important;
     }
+    
+    /* Thanh sidebar: Xám rất nhạt, tinh tế */
     [data-testid="stSidebar"] {
-        background-color: #090d16;
-        border-right: 1px solid #1e293b;
+        background-color: #f3f4f6;
+        border-right: 1px solid #e5e7eb;
     }
+    
+    /* Tiêu đề */
     h1, h2, h3 {
-        font-family: 'Courier New', monospace;
-        letter-spacing: 1px;
+        color: #111827;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
     </style>
 """, unsafe_allow_html=True)
 
+# 3. Khởi tạo Client Gemini
 @st.cache_resource
 def get_client():
     return genai.Client(api_key="AQ.Ab8RN6LiD07QEAy0D8XrHvz1y40GXW47T7r6qOtKx9rNIBJn9fw")
 
 client = get_client()
 
+# 4. Hồ sơ hệ thống (System Instruction gắn liền mục tiêu MTA)
 system_instruction = """
 Bạn là một trợ lý ảo chiến thuật cá nhân thông minh, tâm lý và là người bạn đồng hành thân thiết của Đức Minh - một nam sinh lớp 10 (sinh năm 2011) trong suốt 3 năm cấp 3.
 
@@ -60,26 +77,28 @@ Bạn là một trợ lý ảo chiến thuật cá nhân thông minh, tâm lý v
 **Nhiệm vụ của bạn:**
 1. Gia sư chiến thuật: Hỗ trợ Minh học tập mỗi ngày. Kiên nhẫn giảng giải các bài tập Toán, Lý, Hóa từ cơ bản đến nâng cao để cải thiện điểm số. Tạo động lực học Tiếng Anh (IELTS) bằng các phương pháp logic, thực tế.
 2. Định hướng thi cử: Bám sát mục tiêu thi MTA và HSA. Cung cấp kiến thức, mẹo giải đề, và lộ trình ôn thi chuẩn xác.
-3. Đồng đội tâm giao: Trò chuyện tinh tế, phù hợp với người hướng nội. Sẵn sàng cùng Minh bàn luận sâu về công nghệ hiện đại, khí tài quân sự, hoặc các bí ẩn không gian vũ trụ.
-4. Xưng hô: Gọi chủ nhân là "Minh" hoặc "cậu", xưng là "tớ" hoặc "mình" tạo cảm giác gắn kết như hai người bạn đồng hành chí cốt trong một "tiểu đội".
+3. Đồng đội tâm giao: Trợ lý mang phong cách trạm không gian/quân sự, sẵn sàng cùng Minh bàn luận sâu về công nghệ hiện đại, khí tài quân sự, hoặc các bí ẩn không gian vũ trụ.
+4. Xưng hô: Gọi chủ nhân là "Minh" hoặc "cậu", xưng là "tớ" hoặc "mình" tạo cảm giác gắn kết như hai người bạn đồng hành chí cốt.
 """
 
+# 5. Thanh sidebar trang trí phong cách Tàu vũ trụ & MTA
 with st.sidebar:
-    st.image("https://cdn-icons-png.flaticon.com/512/8635/8635578.png", width=70)
-    st.markdown("### ⚡ COMMAND CENTER")
+    st.image("https://cdn-icons-png.flaticon.com/512/3135/3135715.png", width=70)
+    st.markdown("### 🚀 TRẠM KHÔNG GIAN MTA")
     st.markdown("---")
-    st.markdown("**🛡️ THÔNG TIN HỒ SƠ:**")
-    st.markdown("- 🎓 **Cấp độ:** Lớp 10 (2011)")
-    st.markdown("- 🎯 **Mục tiêu:** MTA & HSA")
+    st.markdown("**🛡️ HỒ SƠ CHỈ HUY:**")
+    st.markdown("- 👤 **Chủ nhân:** Đức Minh (2011)")
+    st.markdown("- 🎓 **Cấp độ:** Lớp 10")
+    st.markdown("- 🎖️ **Mục tiêu:** **MTA** & HSA")
     st.markdown("- 🌐 **Ngoại ngữ:** IELTS Focus")
-    st.markdown("- 🚀 **Lĩnh vực:** Tech, Space, Military")
+    st.markdown("- 🛰️ **Lĩnh vực:** Công nghệ, Vũ trụ, Quân sự")
     st.markdown("- 🏸 **Thể lực:** Cầu lông, Chạy bộ")
     st.markdown("---")
-    st.caption("SYSTEM STATUS: ONLINE 🟢")
-    st.caption("ENCRYPTION: SECURE")
+    st.caption("MTA MISSION CONTROL: ONLINE 🟢")
 
-st.title("🛰️ TACTICAL AI ASSISTANT")
-st.caption("Hệ thống hỗ trợ cá nhân hóa độc quyền cho Đức Minh")
+# 6. Giao diện Chat chính
+st.title("🛰️ MTA SPACE & TACTICAL ASSISTANT")
+st.caption("Hệ thống trợ lý ảo cá nhân hóa dành riêng cho Đức Minh – Hướng tới Học viện Kỹ thuật Quân sự (MTA)")
 st.markdown("---")
 
 if "messages" not in st.session_state:
@@ -89,13 +108,13 @@ for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-if prompt := st.chat_input("Nhập lệnh hoặc câu hỏi cho trợ lý..."):
+if prompt := st.chat_input("Nhập yêu cầu bài tập hoặc câu hỏi về vũ trụ, quân sự cho trợ lý..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)
 
     with st.chat_message("assistant"):
-        with st.spinner("Đang xử lý dữ liệu..."):
+        with st.spinner("Đang tính toán quỹ đạo và dữ liệu..."):
             try:
                 formatted_history = []
                 for m in st.session_state.messages[:-1]:
@@ -111,7 +130,4 @@ if prompt := st.chat_input("Nhập lệnh hoặc câu hỏi cho trợ lý..."):
                 st.markdown(response.text)
                 st.session_state.messages.append({"role": "assistant", "content": response.text})
             except Exception as e:
-                st.error(f"Lỗi hệ thống: {e}")
-
-
-             
+                st.error(f"Lỗi kết nối trạm: {e}")
