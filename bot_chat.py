@@ -108,9 +108,9 @@ if prompt := st.chat_input("Nhập yêu cầu bài tập hoặc câu hỏi về 
     with st.chat_message("user"):
         st.markdown(prompt)
 
-    with st.chat_message("assistant"):
-        with st.spinner("Đang tính toán quỹ đạo và dữ liệu..."):
- try:
+   with st.chat_message("assistant"):
+    with st.spinner("Đang tính toán quỹ đạo và dữ liệu..."):
+        try:
             gemini_history = []
             for m in st.session_state.messages:
                 role = "user" if m["role"] == "user" else "model"
@@ -121,6 +121,5 @@ if prompt := st.chat_input("Nhập yêu cầu bài tập hoặc câu hỏi về 
             
             st.markdown(response.text)
             st.session_state.messages.append({"role": "assistant", "content": response.text})
- except Exception as e:
+        except Exception as e:
             st.error(f"Lỗi kết nối trạm: {e}")
-               
