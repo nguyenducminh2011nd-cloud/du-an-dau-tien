@@ -1,5 +1,5 @@
 import streamlit as st
-import google.generativeai as genai
+from google import genai
 
 # 1. Cấu hình giao diện tổng thể
 st.set_page_config(
@@ -45,13 +45,13 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 3. Khởi tạo Client Gemini chuẩn xác nhất hiện nay
+# 3. Khởi tạo Client Gemini tương thích hoàn toàn với khóa AQ.
 @st.cache_resource
 def get_client():
-    genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
-    return genai.GenerativeModel("gemini-2.5-flash")
+    api_key = st.secrets["GEMINI_API_KEY"]
+    return genai.Client(api_key=api_key)
 
-model = get_client()
+client = get_client()
 
 # 4. Hồ sơ hệ thống (System Instruction)
 system_instruction = """
@@ -106,9 +106,12 @@ if prompt := st.chat_input("Nhập yêu cầu bài tập hoặc câu hỏi về 
     with st.chat_message("assistant"):
         with st.spinner("Đang kết nối trạm không gian..."):
             try:
-                # Gộp System Instruction trực tiếp vào nội dung gửi để tránh lỗi lệch version API cũ
+                # Gộp System Instruction vào nội dung gửi cho Client mới
                 full_prompt = f"{system_instruction}\n\nChủ nhân Đức Minh nói: {prompt}"
-                response = model.generate_content(full_prompt)
+                response = client.models.generate_content(
+                    model="gemini-2.0-flash",
+                    contents=full_prompt,
+                )
                 
                 st.markdown(response.text)
                 st.session_state.messages.append({"role": "assistant", "content": response.text})
