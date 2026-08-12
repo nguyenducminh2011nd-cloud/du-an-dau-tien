@@ -1,7 +1,6 @@
 import streamlit as st
 from google import genai
 
-# 1. Cấu hình giao diện
 st.set_page_config(
     page_title="MTA Tactical AI - Đức Minh",
     page_icon="🛰️",
@@ -9,21 +8,20 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# 2. Khởi tạo Client
+# Khởi tạo client trực tiếp với khóa AQ. của cậu
 @st.cache_resource
 def get_client():
-    return genai.Client(api_key=st.secrets["GEMINI_API_KEY"])
+    api_key = st.secrets["GEMINI_API_KEY"]
+    return genai.Client(api_key=api_key)
 
 client = get_client()
 
-# 3. Hồ sơ hệ thống
 system_instruction = """
 Bạn là một trợ lý ảo chiến thuật cá nhân thông minh, tâm lý và là người bạn đồng hành thân thiết của Đức Minh – một nam sinh lớp 10.
 Mục tiêu tối thượng của Minh: Đỗ vào Học viện Kỹ thuật Quân sự (MTA) và đạt điểm cao trong kỳ thi Đánh giá năng lực (HSA).
 Xưng hô: Gọi chủ nhân là "Minh" hoặc "cậu", xưng là "tớ" hoặc "mình".
 """
 
-# 4. Giao diện Sidebar
 with st.sidebar:
     st.image("https://cdn-icons-png.flaticon.com/512/3065/3065405.png", width=80)
     st.markdown("### 🛰️ TRẠM KHÔNG GIAN MTA")
@@ -36,7 +34,6 @@ with st.sidebar:
     st.markdown("---")
     st.caption("MTA MISSION CONTROL: ONLINE 🟢")
 
-# 5. Giao diện Chat chính
 st.title("🛰️ MTA SPACE & TACTICAL ASSISTANT")
 st.caption("Hệ thống trợ lý ảo cá nhân hóa dành riêng cho Đức Minh – Hướng tới Học viện Kỹ thuật Quân sự (MTA)")
 st.markdown("---")
@@ -57,12 +54,11 @@ if prompt := st.chat_input("Nhập yêu cầu bài tập hoặc câu hỏi..."):
         with st.spinner("Đang kết nối trạm không gian..."):
             try:
                 full_prompt = f"{system_instruction}\n\nChủ nhân Đức Minh nói: {prompt}"
-                # Gọi đúng chuẩn tên model cho SDK mới
+                # Sử dụng model gemini-2.5-flash tương thích với client mới
                 response = client.models.generate_content(
                     model='gemini-2.5-flash',
                     contents=full_prompt,
                 )
-                
                 st.markdown(response.text)
                 st.session_state.messages.append({"role": "assistant", "content": response.text})
             except Exception as e:
