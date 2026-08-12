@@ -57,9 +57,9 @@ if prompt := st.chat_input("Nhập yêu cầu bài tập hoặc câu hỏi..."):
         with st.spinner("Đang kết nối trạm không gian..."):
             try:
                 full_prompt = f"{system_instruction}\n\nChủ nhân Đức Minh nói: {prompt}"
-                # Sử dụng model gemini-1.5-flash cực kỳ bền bỉ và ổn định
+                # Gọi đúng chuẩn tên model cho SDK mới
                 response = client.models.generate_content(
-                    model='gemini-1.5-flash',
+                    model='gemini-2.5-flash',
                     contents=full_prompt,
                 )
                 
