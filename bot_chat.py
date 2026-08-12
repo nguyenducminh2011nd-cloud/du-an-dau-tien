@@ -113,7 +113,7 @@ if prompt := st.chat_input("Nhập yêu cầu bài tập hoặc câu hỏi về 
             try:
                 # Chuyển đổi lịch sử chat cũ sang đúng chuẩn định dạng của SDK cũ
                 gemini_history = []
-                for m in st.session_state.messages
+                for m in st.session_state.messages:
                     role = "user" if m["role"] == "user" else "model"
                     gemini_history.append({"role": role, "parts": [m["content"]]})
                 
