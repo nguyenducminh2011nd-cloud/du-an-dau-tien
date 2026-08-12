@@ -95,6 +95,10 @@ st.markdown("---")
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
+# 6. Giao diện Chat chính
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
@@ -107,17 +111,18 @@ if prompt := st.chat_input("Nhập yêu cầu bài tập hoặc câu hỏi về 
     with st.chat_message("assistant"):
         with st.spinner("Đang tính toán quỹ đạo và dữ liệu..."):
             try:
-                formatted_history = []
-                for m in st.session_state.messages[:-1]:
+                # Chuyển đổi lịch sử chat cũ sang đúng chuẩn định dạng của SDK cũ
+                gemini_history = []
+                for m in st.session_state.messages
                     role = "user" if m["role"] == "user" else "model"
-                    formatted_history.append({"role": role, "parts": [{"text": m["content"]}]})
-
-                chat = client.chats.create(
-                    model="gemini-2.5-flash",
-                    history=formatted_history,
-                    config=genai.types.GenerateContentConfig(system_instruction=system_instruction)
-                )
+                    gemini_history.append({"role": role, "parts": [m["content"]]})
+                
+                # Khởi tạo phiên chat có kèm theo lịch sử trò chuyện trước đó
+                chat = model.start_chat(history=gemini_history)
+                
+                # Gửi tin nhắn mới và nhận phản hồi
                 response = chat.send_message(prompt)
+                
                 st.markdown(response.text)
                 st.session_state.messages.append({"role": "assistant", "content": response.text})
             except Exception as e:
