@@ -48,7 +48,7 @@ st.markdown("""
 # 3. Khởi tạo Client Gemini chuẩn theo SDK mới
 @st.cache_resource
 def get_client():
-    return genai.Client(api_key="AQ.Ab8RN6LiD07QEAy0D8XrHvz1y40GXW47T7r6qOtKx9rNIBJn9fw")
+    return genai.Client(api_key="AQ.Ab8RN6IULu6qVKMmHcqsQrjyEUyf3pUyTswFgcq2xe4aQn0Y6Q")
 
 client = get_client()
 
