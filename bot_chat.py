@@ -118,7 +118,7 @@ if prompt := st.chat_input("Nhập yêu cầu bài tập hoặc câu hỏi về 
                     gemini_history.append({"role": role, "parts": [m["content"]]})
                 
                 # Khởi tạo phiên chat có kèm theo lịch sử trò chuyện trước đó
-                chat = model.start_chat(history=gemini_
+                chat = model.start_chat(history=gemini_history)
                 
                 # Gửi tin nhắn mới và nhận phản hồi
                 response = chat.send_message(prompt)
