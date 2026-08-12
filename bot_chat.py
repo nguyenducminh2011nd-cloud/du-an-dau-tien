@@ -45,11 +45,11 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 3. Khởi tạo Client Gemini với model chính thức hiện tại
+# 3. Khởi tạo Client Gemini chuẩn xác nhất hiện nay
 @st.cache_resource
 def get_client():
     genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
-    return genai.GenerativeModel("gemini-2.0-flash")
+    return genai.GenerativeModel("gemini-2.5-flash")
 
 model = get_client()
 
@@ -104,15 +104,11 @@ if prompt := st.chat_input("Nhập yêu cầu bài tập hoặc câu hỏi về 
         st.markdown(prompt)
 
     with st.chat_message("assistant"):
-        with st.spinner("Đang kết nối hệ thống quỹ đạo mới..."):
+        with st.spinner("Đang kết nối trạm không gian..."):
             try:
-                gemini_history = []
-                for m in st.session_state.messages:
-                    role = "user" if m["role"] == "user" else "model"
-                    gemini_history.append({"role": role, "parts": [m["content"]]})
-                
-                chat = model.start_chat(history=gemini_history)
-                response = chat.send_message(prompt)
+                # Gộp System Instruction trực tiếp vào nội dung gửi để tránh lỗi lệch version API cũ
+                full_prompt = f"{system_instruction}\n\nChủ nhân Đức Minh nói: {prompt}"
+                response = model.generate_content(full_prompt)
                 
                 st.markdown(response.text)
                 st.session_state.messages.append({"role": "assistant", "content": response.text})
