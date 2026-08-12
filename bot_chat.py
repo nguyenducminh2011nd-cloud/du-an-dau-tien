@@ -45,15 +45,15 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 3. Khởi tạo Client Gemini chuẩn an toàn
+# 3. Khởi tạo Client Gemini tương thích khóa AQ
+import google.generativeai as genai
+
 @st.cache_resource
 def get_client():
-    return genai.Client(api_key=st.secrets["GEMINI_API_KEY"])
+    genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
+    return genai.GenerativeModel("gemini-1.5-flash")
 
-client = get_client()
-
-client = get_client()
-
+model = get_client()
 # 4. Hồ sơ hệ thống (System Instruction)
 system_instruction = """
 Bạn là một trợ lý ảo chiến thuật cá nhân thông minh, tâm lý và là người bạn đồng hành thân thiết của Đức Minh - một nam sinh lớp 10 (sinh năm 2011) trong suốt 3 năm cấp 3.
