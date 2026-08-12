@@ -45,7 +45,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 3. Khởi tạo Client Gemini tương thích hoàn toàn với khóa AQ.
+# 3. Khởi tạo Client Gemini tương thích hoàn toàn
 @st.cache_resource
 def get_client():
     api_key = st.secrets["GEMINI_API_KEY"]
@@ -106,10 +106,10 @@ if prompt := st.chat_input("Nhập yêu cầu bài tập hoặc câu hỏi về 
     with st.chat_message("assistant"):
         with st.spinner("Đang kết nối trạm không gian..."):
             try:
-                # Gộp System Instruction vào nội dung gửi cho Client mới
                 full_prompt = f"{system_instruction}\n\nChủ nhân Đức Minh nói: {prompt}"
+                # Sử dụng model gemini-2.5-flash mới nhất
                 response = client.models.generate_content(
-                    model="gemini-2.0-flash",
+                    model="gemini-2.5-flash",
                     contents=full_prompt,
                 )
                 
