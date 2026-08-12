@@ -45,11 +45,11 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 3. Khởi tạo Client Gemini với model mới nhất
+# 3. Khởi tạo Client Gemini với model chính thức hiện tại
 @st.cache_resource
 def get_client():
     genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
-    return genai.GenerativeModel("gemini-2.5-flash")
+    return genai.GenerativeModel("gemini-2.0-flash")
 
 model = get_client()
 
